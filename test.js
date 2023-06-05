@@ -172,7 +172,7 @@ scene("game", ({levelIndex})=>{
 
 scene("lose", ()=>{
     add([
-        text("looser"),
+        text("loser"),
         pos(center())
     ])
 })
