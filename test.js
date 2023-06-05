@@ -11,7 +11,7 @@ loadSprite("playerRed", "sprites/playerRed.png");
 loadSprite("playerBlue", "sprites/playerBlue.png");
 
 loadSprite("brickLight", "sprites/brickLight.png");
-loadSprite("door", "sprites/door.png");
+loadSprite("door", "sprites/doorR.png");
 
 loadSprite("lava", "sprites/lavablock.png");
 loadSprite("water", "sprites/waterblock.png");
@@ -43,8 +43,8 @@ const LEVELS = [
         '=                                    =',
         '=                                    =',
         '=                                    =',
-        '=                                    =',
-        '=                                    =',
+        '=                  !                  =',
+        '=             ===========            =',
         '=                                    =',
         '=                                    =',
         '=  ========                ====xxx====',
