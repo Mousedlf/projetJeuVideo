@@ -167,7 +167,16 @@ scene("game", ({levelIndex})=>{
 
     //NEXT LEVEL
 
+
     playerRed.onCollide("doorR", ()=>{
+        if(levelIndex < LEVELS.length - 1){
+            go("game", {
+                levelIndex : levelIndex +1
+            })
+        }
+    })
+
+    playerBlue.onCollide("doorB", ()=>{
         if(levelIndex < LEVELS.length - 1){
             go("game", {
                 levelIndex : levelIndex +1
