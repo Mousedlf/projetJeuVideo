@@ -1,7 +1,7 @@
 // initialize context
 kaboom({
     scale:1,
-    clearColor:[0,0,0,1],
+    clearColor:[0,0,1,1],
 });
 
 const SPEED = 150
@@ -16,10 +16,12 @@ loadSprite("doorB", "sprites/doorB.png");
 
 loadSprite("lava", "sprites/lavablock.png");
 loadSprite("water", "sprites/waterblock.png");
+loadSprite("acid", "sprites/green.png");
 
 
 //AUTRE
 setGravity(1600)
+setBackground(255,255,255,0)
 
 
 //niveaux
@@ -32,28 +34,28 @@ const LEVELS = [
         '=                                    =',
         '=                                    =',
         '=                                    =',
+        '=                    !   ?           =',
+        '=                =============       =',
         '=                                    =',
         '=                                    =',
         '=                                    =',
         '=                                    =',
         '=                                    =',
+        '=              =======               =',
+        '=                                    =',
+        '=                                    =',
+        '=                                    =',
+        '=         ====                       =',
+        '=             ======aa=====          =',
+        '=                                    =',
+        '=                                    =',
+        '=                                    =',
+        '=                          ====xxx====',
         '=                                    =',
         '=                                    =',
         '=                                    =',
         '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                  !   ?             =',
-        '=             ===========            =',
-        '=                                    =',
-        '=                                    =',
-        '=  ========                ====xxx====',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '========================oooo==========',
+        '=================ooo==================',
     ],
     [
         '======================================',
@@ -70,8 +72,8 @@ const LEVELS = [
         '=                                    =',
         '=                                    =',
         '=                                    =',
-        '=                                    =',
-        '========================oooo==========',
+        '=  ! ?                               =',
+        '=========================ooo==========',
     ]
 ]
 
@@ -112,6 +114,14 @@ scene("game", ({levelIndex})=>{
                 body({ isStatic: true }),
                 'doorB'
             ],
+            "a": () => [
+                sprite("acid"),
+                area(),
+                body({ isStatic: true }),
+                'dangerB',
+                'dangerR'
+            ],
+
         }
 
     })
@@ -120,7 +130,7 @@ scene("game", ({levelIndex})=>{
     const playerRed = add([
         // list of components
         sprite("playerRed"),
-        pos(10, 0),
+        pos(20,0),
         area(),
         body(),
     ]);
@@ -136,15 +146,19 @@ scene("game", ({levelIndex})=>{
             playerRed.jump()
         }
     })
+
+    //ajout isTop() ?
     playerRed.onCollide("dangerB", ()=>{
-        go("lose")
+        if(isTop()){
+            go("lose")
+        }
     })
 
     // BLUE PLAYER
     const playerBlue = add([
         // list of components
         sprite("playerBlue"),
-        pos(10, 0),
+        pos(20,0),
         area(),
         body(),
     ]);
@@ -161,18 +175,25 @@ scene("game", ({levelIndex})=>{
         }
     })
 
+    //ajout isTop() ?
     playerBlue.onCollide("dangerR", ()=>{
-        go("lose")
+        if(isTop(true)){
+            go("lose")
+        }
     })
 
     //NEXT LEVEL
 
+ //   if les deux collide alors passage prochain niveau
 
     playerRed.onCollide("doorR", ()=>{
         if(levelIndex < LEVELS.length - 1){
             go("game", {
                 levelIndex : levelIndex +1
             })
+        }else {
+            // Otherwise we have reached the end of game, go to "win" scene!
+            go("win")
         }
     })
 
@@ -190,6 +211,13 @@ scene("game", ({levelIndex})=>{
 scene("lose", ()=>{
     add([
         text("loser"),
+        pos(center())
+    ])
+})
+
+scene("win", ()=>{
+    add([
+        text("you won"),
         pos(center())
     ])
 })
