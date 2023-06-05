@@ -1,6 +1,6 @@
 // initialize context
 kaboom({
-    scale:1.5,
+    scale:1,
     clearColor:[0,0,0,1],
 });
 
@@ -11,7 +11,8 @@ loadSprite("playerRed", "sprites/playerRed.png");
 loadSprite("playerBlue", "sprites/playerBlue.png");
 
 loadSprite("brickLight", "sprites/brickLight.png");
-loadSprite("door", "sprites/doorR.png");
+loadSprite("doorR", "sprites/doorR.png");
+loadSprite("doorB", "sprites/doorB.png");
 
 loadSprite("lava", "sprites/lavablock.png");
 loadSprite("water", "sprites/waterblock.png");
@@ -43,7 +44,7 @@ const LEVELS = [
         '=                                    =',
         '=                                    =',
         '=                                    =',
-        '=                  !                 =',
+        '=                  !   ?             =',
         '=             ===========            =',
         '=                                    =',
         '=                                    =',
@@ -100,10 +101,16 @@ scene("game", ({levelIndex})=>{
                 'dangerB'
             ],
             "!": () => [
-                sprite("door"),
+                sprite("doorR"),
                 area(),
                 body({ isStatic: true }),
-                'door'
+                'doorR'
+            ],
+            "?": () => [
+                sprite("doorB"),
+                area(),
+                body({ isStatic: true }),
+                'doorB'
             ],
         }
 
@@ -113,7 +120,7 @@ scene("game", ({levelIndex})=>{
     const playerRed = add([
         // list of components
         sprite("playerRed"),
-        pos(50, 0),
+        pos(10, 0),
         area(),
         body(),
     ]);
@@ -137,7 +144,7 @@ scene("game", ({levelIndex})=>{
     const playerBlue = add([
         // list of components
         sprite("playerBlue"),
-        pos(50, 0),
+        pos(10, 0),
         area(),
         body(),
     ]);
@@ -159,7 +166,8 @@ scene("game", ({levelIndex})=>{
     })
 
     //NEXT LEVEL
-    playerRed.onCollide("door", ()=>{
+
+    playerRed.onCollide("doorR", ()=>{
         if(levelIndex < LEVELS.length - 1){
             go("game", {
                 levelIndex : levelIndex +1
