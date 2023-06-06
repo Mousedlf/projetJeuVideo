@@ -5,7 +5,7 @@ kaboom({
 });
 
 const SPEED = 150
-const JUMP_FORCE = 550
+const JUMP_FORCE = 600
 
 //load assets
 loadSprite("playerRed", "sprites/playerRed.png");
@@ -206,7 +206,7 @@ scene("game", ({levelIndex, score})=>{
     })
     onKeyPress("z", ()=>{
         if(playerBlue.isGrounded()){
-            playerBlue.jump()
+            playerBlue.jump(JUMP_FORCE)
         }
     })
 
@@ -225,7 +225,10 @@ scene("game", ({levelIndex, score})=>{
     })
 
     //NEXT LEVEL
- //   if les deux collide alors passage prochain niveau
+ // if les deux collide alors passage prochain niveau
+
+    if((playerRed.onCollide("doorR") && playerBlue.onCollide("doorB")  )
+
 
     playerRed.onCollide("doorR", ()=>{
         if(levelIndex < LEVELS.length - 1){
@@ -237,9 +240,6 @@ scene("game", ({levelIndex, score})=>{
         }
     })
 
-    playerBlue.onCollide("doorB", ()=>{
-
-    })
 
 
 })
