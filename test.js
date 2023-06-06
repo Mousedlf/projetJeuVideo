@@ -224,12 +224,33 @@ scene("game", ({levelIndex, score})=>{
         }
     })
 
-    //NEXT LEVEL
- // if les deux collide alors passage prochain niveau
+    //NEXT LEVEL (répétition nulle)
+
+onCollide("playerRed", "doorR", (a,b,col)=>{
+    onCollide("playerBlue", "doorB", ()=>{
+        if(levelIndex < LEVELS.length - 1){
+            go("game", {
+                levelIndex : levelIndex +1
+            })
+        }else {
+            go("win")
+        }
+    })
+} )
+    onCollide("playerBlue", "doorB", (a,b,col)=>{
+        onCollide("playerRed", "doorR", ()=>{
+            if(levelIndex < LEVELS.length - 1){
+                go("game", {
+                    levelIndex : levelIndex +1
+                })
+            }else {
+                go("win")
+            }
+        })
+    } )
 
 
-
-
+/*
     playerRed.onCollide("doorR", ()=>{
         if(levelIndex < LEVELS.length - 1){
             go("game", {
@@ -239,6 +260,7 @@ scene("game", ({levelIndex, score})=>{
             go("win")
         }
     })
+*/
 
 
 
