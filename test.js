@@ -1,18 +1,23 @@
 // initialize context
 kaboom({
     scale:1,
-    clearColor:[0,0,1,1],
+    debug: true,
 });
 
 const SPEED = 150
+const JUMP_FORCE = 550
 
 //load assets
 loadSprite("playerRed", "sprites/playerRed.png");
 loadSprite("playerBlue", "sprites/playerBlue.png");
 
 loadSprite("brickLight", "sprites/brickLight.png");
+loadSprite("box", "sprites/box.png");
 loadSprite("doorR", "sprites/doorR.png");
 loadSprite("doorB", "sprites/doorB.png");
+
+loadSprite("diamondR", "sprites/diamondR.png");
+loadSprite("diamondB", "sprites/diamondB.png");
 
 loadSprite("lava", "sprites/lavablock.png");
 loadSprite("water", "sprites/waterblock.png");
@@ -21,7 +26,8 @@ loadSprite("acid", "sprites/green.png");
 
 //AUTRE
 setGravity(1600)
-setBackground(255,255,255,0)
+setBackground(220,220,220,0)
+
 
 
 //niveaux
@@ -29,44 +35,39 @@ setBackground(255,255,255,0)
 const LEVELS = [
     [
         '======================================',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                    !   ?           =',
+        '=                =                   =',
+        '=                =                   =',
+        '=                =                   =',
+        '=                =   !   ?           =',
         '=                =============       =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
+        '=  +                         ===     =',
+        '=                 *             =    =',
+        '======                               =',
         '=              =======               =',
-        '=                                    =',
-        '=                                    =',
+        '=                               ======',
+        '=                       ====   =     =',
         '=                                    =',
         '=         ====                       =',
-        '=             ======aa=====          =',
+        '=                            ===     =',
+        '=             ======aa===            =',
         '=                                    =',
+        '=                           ===xxx====',
         '=                                    =',
-        '=                                    =',
-        '=                          ====xxx====',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
+        '=                        ===         =',
+        '=   +                         *      =',
+        '=          b                         =',
         '=================ooo==================',
     ],
     [
         '======================================',
         '=                                    =',
+        '======                               =',
         '=                                    =',
         '=                                    =',
         '=                                    =',
         '=                                    =',
         '=                                    =',
-        '=                                    =',
-        '=                                    =',
+        '=                                   =',
         '=                                    =',
         '=          ===========xxx====        =',
         '=                                    =',
@@ -78,17 +79,23 @@ const LEVELS = [
 ]
 
 
-scene("game", ({levelIndex})=>{
+scene("game", ({levelIndex, score})=>{
 
-    //
+    // différents elements
     const level = addLevel(LEVELS[levelIndex || 0],{
-        tileWidth: 22,
-        tileHeight: 22,
+        tileWidth: 32,
+        tileHeight: 32,
         tiles:{
             "=": () => [
                 sprite("brickLight"),
                 area(),
                 body({ isStatic: true })
+            ],
+            "b": () => [
+                sprite("box"),
+                area(),
+                body({ mass: 2 }),
+                "box"
             ],
             "x": () => [
                 sprite("lava"),
@@ -121,20 +128,49 @@ scene("game", ({levelIndex})=>{
                 'dangerB',
                 'dangerR'
             ],
-
+            "*": () => [
+                sprite("diamondR"),
+                area(),
+                'diamondR'
+            ],
+            "+": () => [
+                sprite("diamondB"),
+                area(),
+                'diamondB'
+            ],
         }
 
     })
+
+    // affichage du score
+    const scoreLabel = add([
+        text(score),
+        pos(12),
+    ])
 
    // RED PLAYER
     const playerRed = add([
         // list of components
         sprite("playerRed"),
-        pos(20,0),
+        pos(2,0),
         area(),
         body(),
+        "playerRed",
+        "player"
     ]);
 
+    // BLUE PLAYER
+    const playerBlue = add([
+        // list of components
+        sprite("playerBlue"),
+        pos(10,0),
+        area(),
+        body(),
+        "playerBlue",
+        "player"
+    ]);
+
+    // déplacement ROUGE
     onKeyDown("right", ()=>{
         playerRed.move(SPEED,0)
     })
@@ -143,26 +179,25 @@ scene("game", ({levelIndex})=>{
     })
     onKeyPress("up", ()=>{
         if(playerRed.isGrounded()){
-            playerRed.jump()
+            playerRed.jump(JUMP_FORCE)
         }
     })
 
-    //ajout isTop() ?
-    playerRed.onCollide("dangerB", ()=>{
-        if(isTop()){
+    // collision avec diamand rouge
+    playerRed.onCollide("diamondR", (diamond)=>{
+        destroy(diamond)
+        score++
+        scoreLabel.text = score
+    })
+
+    // collision avec block eau
+    onCollide("playerRed", "dangerB", (a, b, col) => {
+        if(col.isBottom()){
             go("lose")
         }
     })
 
-    // BLUE PLAYER
-    const playerBlue = add([
-        // list of components
-        sprite("playerBlue"),
-        pos(20,0),
-        area(),
-        body(),
-    ]);
-
+    // déplacement BLEU
     onKeyDown("d", ()=>{
         playerBlue.move(SPEED,0)
     })
@@ -175,15 +210,21 @@ scene("game", ({levelIndex})=>{
         }
     })
 
-    //ajout isTop() ?
-    playerBlue.onCollide("dangerR", ()=>{
-        if(isTop(true)){
+    // collision avec diamand Bleu
+    playerBlue.onCollide("diamondB", (diamond)=>{
+        destroy(diamond)
+        score++
+        scoreLabel.text = score
+    })
+
+    // collision avec block lave
+    onCollide("playerBlue", "dangerR", (a, b, col) => {
+        if(col.isBottom()){
             go("lose")
         }
     })
 
     //NEXT LEVEL
-
  //   if les deux collide alors passage prochain niveau
 
     playerRed.onCollide("doorR", ()=>{
@@ -192,17 +233,12 @@ scene("game", ({levelIndex})=>{
                 levelIndex : levelIndex +1
             })
         }else {
-            // Otherwise we have reached the end of game, go to "win" scene!
             go("win")
         }
     })
 
     playerBlue.onCollide("doorB", ()=>{
-        if(levelIndex < LEVELS.length - 1){
-            go("game", {
-                levelIndex : levelIndex +1
-            })
-        }
+
     })
 
 
@@ -224,5 +260,6 @@ scene("win", ()=>{
 
 // start game
 go("game", {
-    levelIndex: 0
+    levelIndex: 0,
+    score:0
 });
