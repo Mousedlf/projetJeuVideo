@@ -227,7 +227,7 @@ scene("game", ({levelIndex, score})=>{
     //NEXT LEVEL
  // if les deux collide alors passage prochain niveau
 
-    if((playerRed.onCollide("doorR") && playerBlue.onCollide("doorB")  )
+
 
 
     playerRed.onCollide("doorR", ()=>{
