@@ -2,16 +2,18 @@
 kaboom({
     scale:1,
     debug: true,
+
 });
 
-const SPEED = 150
-const JUMP_FORCE = 600
 
 //load assets
 loadSprite("playerRed", "sprites/playerRed.png");
 loadSprite("playerBlue", "sprites/playerBlue.png");
 
 loadSprite("brickLight", "sprites/brickLight.png");
+loadSprite("lift", "sprites/waterblock.png");
+loadSprite("button", "sprites/brickLight.png");
+
 loadSprite("box", "sprites/box.png");
 loadSprite("doorR", "sprites/doorR.png");
 loadSprite("doorB", "sprites/doorB.png");
@@ -25,50 +27,43 @@ loadSprite("acid", "sprites/green.png");
 
 
 //AUTRE
-setGravity(1600)
+setGravity(600)
 setBackground(220,220,220,0)
 
 
+const SPEED = 150
+const JUMP_FORCE = 300
+const PLATFORM_SPEED = 5
+
 
 //niveaux
-
 const LEVELS = [
     [
-        '======================================',
-        '=                =                   =',
-        '=                =                   =',
-        '=                =                   =',
-        '=                =   !   ?           =',
-        '=                =============       =',
-        '=  +                         ===     =',
-        '=                 *             =    =',
-        '======                               =',
-        '=              =======               =',
-        '=                               ======',
-        '=                       ====   =     =',
-        '=                                    =',
-        '=         ====                       =',
-        '=                            ===     =',
-        '=             ======aa===            =',
-        '=                                    =',
-        '=                           ===xxx====',
-        '=                                    =',
-        '=                        ===         =',
-        '=   +                         *      =',
-        '=          b                         =',
-        '=================ooo==================',
+        '========================================',
+        '= =                                    =',
+        '= =                              !   ? =',
+        '= =         ============================',
+        '= =  +                                 =',
+        '= =====                                =',
+        '= =====                                =',
+        '= =====        ===xx======             =',
+        '= =========aa===================       =',
+        '= =                                    =',
+        '= =               *                    =',
+        '= =      ==============         -      =',
+        '=       =             ==================',
+        '=                                =======',
+        '======      .                        ===',
+        '==================                     =',
+        '=======================oo=========     =',
+        '=                                   ====',
+        '=    * +    *                       ====',
+        '=                b                  ====',
+        '========================================',
     ],
     [
-        '======================================',
-        '=                                    =',
-        '======                               =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=                                   =',
-        '=                                    =',
+
+        '=            _                        =',
         '=          ===========xxx====        =',
         '=                                    =',
         '=                                    =',
@@ -78,64 +73,76 @@ const LEVELS = [
     ]
 ]
 
+scene("game", ({levelIndex, score, time})=> {
 
-scene("game", ({levelIndex, score})=>{
-
-    // différents elements
-    const level = addLevel(LEVELS[levelIndex || 0],{
+    // différents elements d'un niveau
+    const level = addLevel(LEVELS[levelIndex || 0], {
         tileWidth: 32,
         tileHeight: 32,
-        tiles:{
+        tiles: {
             "=": () => [
                 sprite("brickLight"),
                 area(),
-                body({ isStatic: true })
+                body({isStatic: true})
+            ],
+/*            "-": () => [
+                sprite("lift"),
+                area(),
+                body({isStatic: true}),
+                "lift"
+            ],*/
+            ".": () => [
+                sprite("button"),
+                area(),
+                scale(0.5),
+                body({isStatic: true}),
+                "button"
             ],
             "b": () => [
                 sprite("box"),
                 area(),
-                body({ mass: 2 }),
+                body({mass: 2}),
                 "box"
             ],
             "x": () => [
                 sprite("lava"),
                 area(),
-                body({ isStatic: true }),
+                body({isStatic: true}),
                 'dangerR'
             ],
             "o": () => [
                 sprite("water"),
                 area(),
-                body({ isStatic: true }),
+                body({isStatic: true}),
                 'dangerB'
             ],
             "!": () => [
                 sprite("doorR"),
                 area(),
-                body({ isStatic: true }),
                 'doorR'
             ],
             "?": () => [
                 sprite("doorB"),
                 area(),
-                body({ isStatic: true }),
                 'doorB'
             ],
             "a": () => [
                 sprite("acid"),
                 area(),
-                body({ isStatic: true }),
+                body({isStatic: true}),
                 'dangerB',
                 'dangerR'
             ],
             "*": () => [
                 sprite("diamondR"),
                 area(),
+                scale(0.75),
                 'diamondR'
             ],
             "+": () => [
                 sprite("diamondB"),
                 area(),
+                scale(0.75),
                 'diamondB'
             ],
         }
@@ -145,30 +152,69 @@ scene("game", ({levelIndex, score})=>{
     // affichage du score
     const scoreLabel = add([
         text(score),
-        pos(12),
+        pos(10, 40),
     ])
 
-   // RED PLAYER
+    // affiche temps qui passe
+    const timer = add([
+        text(0),
+        pos(0, 100),
+        fixed(),
+        { time: 0 },
+    ])
+
+    /*  timer.onUpdate(() => {
+        timer.time += dt()
+        timer.text = timer.time.toFixed(1)
+    })*/
+
+
+    // RED PLAYER
     const playerRed = add([
         // list of components
         sprite("playerRed"),
-        pos(2,0),
+        pos(5,0),
         area(),
         body(),
         "playerRed",
         "player"
     ]);
-
     // BLUE PLAYER
     const playerBlue = add([
         // list of components
         sprite("playerBlue"),
-        pos(10,0),
+        pos(5,0),
         area(),
         body(),
         "playerBlue",
         "player"
     ]);
+
+
+    // LIFT
+    const lift = add([
+        // list of components
+        sprite("lift"),
+        pos(1000,100),
+        area(),
+        body({mass: 200}),
+        "lift"
+    ]);
+
+
+    onCollide("player", "button", (p,b,col)=>{
+        if(col.isBottom()){
+            onUpdate("lift", (lift) => {
+                lift.move(0, -275)
+            })
+        }
+
+    })
+
+
+
+
+
 
     // déplacement ROUGE
     onKeyDown("right", ()=>{
@@ -182,21 +228,6 @@ scene("game", ({levelIndex, score})=>{
             playerRed.jump(JUMP_FORCE)
         }
     })
-
-    // collision avec diamand rouge
-    playerRed.onCollide("diamondR", (diamond)=>{
-        destroy(diamond)
-        score++
-        scoreLabel.text = score
-    })
-
-    // collision avec block eau
-    onCollide("playerRed", "dangerB", (a, b, col) => {
-        if(col.isBottom()){
-            go("lose")
-        }
-    })
-
     // déplacement BLEU
     onKeyDown("d", ()=>{
         playerBlue.move(SPEED,0)
@@ -210,6 +241,13 @@ scene("game", ({levelIndex, score})=>{
         }
     })
 
+
+    // collision avec diamand rouge
+    playerRed.onCollide("diamondR", (diamond)=>{
+        destroy(diamond)
+        score++
+        scoreLabel.text = score
+    })
     // collision avec diamand Bleu
     playerBlue.onCollide("diamondB", (diamond)=>{
         destroy(diamond)
@@ -217,6 +255,13 @@ scene("game", ({levelIndex, score})=>{
         scoreLabel.text = score
     })
 
+
+    // collision avec block eau
+    onCollide("playerRed", "dangerB", (a, b, col) => {
+        if(col.isBottom()){
+            go("lose")
+        }
+    })
     // collision avec block lave
     onCollide("playerBlue", "dangerR", (a, b, col) => {
         if(col.isBottom()){
@@ -224,19 +269,20 @@ scene("game", ({levelIndex, score})=>{
         }
     })
 
-    //NEXT LEVEL (répétition nulle)
 
-onCollide("playerRed", "doorR", (a,b,col)=>{
-    onCollide("playerBlue", "doorB", ()=>{
-        if(levelIndex < LEVELS.length - 1){
-            go("game", {
-                levelIndex : levelIndex +1
-            })
-        }else {
-            go("win")
-        }
-    })
-} )
+
+    //NEXT LEVEL (répétition nulle)
+    onCollide("playerRed", "doorR", (a,b,col)=>{
+        onCollide("playerBlue", "doorB", ()=>{
+            if(levelIndex < LEVELS.length - 1){
+                go("game", {
+                    levelIndex : levelIndex +1
+                })
+            }else {
+                go("win")
+            }
+        })
+    } )
     onCollide("playerBlue", "doorB", (a,b,col)=>{
         onCollide("playerRed", "doorR", ()=>{
             if(levelIndex < LEVELS.length - 1){
@@ -248,28 +294,14 @@ onCollide("playerRed", "doorR", (a,b,col)=>{
             }
         })
     } )
-
-
-/*
-    playerRed.onCollide("doorR", ()=>{
-        if(levelIndex < LEVELS.length - 1){
-            go("game", {
-                levelIndex : levelIndex +1
-            })
-        }else {
-            go("win")
-        }
-    })
-*/
-
-
-
 })
+
 
 scene("lose", ()=>{
     add([
         text("loser"),
         pos(center())
+        // add something to retry level
     ])
 })
 
@@ -283,5 +315,5 @@ scene("win", ()=>{
 // start game
 go("game", {
     levelIndex: 0,
-    score:0
+    score:0,
 });
