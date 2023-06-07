@@ -205,7 +205,7 @@ scene("game", ({levelIndex, score, time})=> {
     onCollide("player", "button", (p,b,col)=>{
         if(col.isBottom()){
             onUpdate("lift", (lift) => {
-                lift.move(0, -275)
+                lift.move(0, -275, 20)
             })
         }
 
