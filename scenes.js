@@ -1,90 +1,5 @@
-// initialize context
-kaboom({
-    scale:1,
-    debug: true,
 
-});
-
-
-//load assets
-loadSprite("playerRed", "sprites/playerRed.png");
-loadSprite("playerBlue", "sprites/playerBlue.png");
-
-loadSprite("brickLight", "sprites/brickLight.png");
-loadSprite("lift", "sprites/waterblock.png");
-loadSprite("button", "sprites/brickLight.png");
-
-loadSprite("box", "sprites/box.png");
-loadSprite("doorR", "sprites/doorR.png");
-loadSprite("doorB", "sprites/doorB.png");
-
-loadSprite("diamondR", "sprites/diamondR.png");
-loadSprite("diamondB", "sprites/diamondB.png");
-
-loadSprite("lava", "sprites/lavablock.png");
-loadSprite("water", "sprites/waterblock.png");
-loadSprite("acid", "sprites/green.png");
-
-
-//AUTRE
-setGravity(600)
-setBackground(220,220,220,0)
-
-
-const SPEED = 150
-const JUMP_FORCE = 300
-
-
-//niveaux
-const LEVELS = [
-    [
-        '========================================',
-        '= =                                    =',
-        '= =                              !   ? =',
-        '= =       ==============================',
-        '= =  +                                 =',
-        '= =====                                =',
-        '= =====                                =',
-        '= =====  b     ===xx======             =',
-        '= =========aa===================       =',
-        '= =                                    =',
-        '= =               *                    =',
-        '= =      ==============         -   b  =',
-        '=       =             ==================',
-        '=                                =======',
-        '======      .                        ===',
-        '==================                     =',
-        '=======================oo=========     =',
-        '=                                   ====',
-        '=    * +    *                       ====',
-        '=                b                  ====',
-        '========================================',
-    ],
-    [
-        '========================================',
-        '=                                      =',
-        '=                                      =',
-        '========        =====                * =',
-        '=================                 ======',
-        '=                                      =',
-        '= +              *+     =======        =',
-        '=                                      =',
-        '=         ==    ====                   =',
-        '=                                      =',
-        '===    ==aaaaaaaaaaaaaaaaaaaa======    =',
-        '=                                      =',
-        '= *                                    =',
-        '=                                      =',
-        '=                                      =',
-        '=    ==xx====         *      +       ? =',
-        '=    =                              ====',
-        '======               ==     ==      ====',
-        '======   !                        b ====',
-        '===================ooooo===xxxxx========',
-    ],
-
-]
-
+////////////////////// HOME
 scene("empty", ()=>{
     add([
         text("press Space or click to start game"),
@@ -107,6 +22,7 @@ scene("empty", ()=>{
 
 })
 
+////////////////////// GAME
 scene("game", ({levelIndex, score, time})=> {
 
     // différents elements d'un niveau
@@ -119,12 +35,12 @@ scene("game", ({levelIndex, score, time})=> {
                 area(),
                 body({isStatic: true})
             ],
-/*            "-": () => [
-                sprite("lift"),
-                area(),
-                body({isStatic: true}),
-                "lift"
-            ],*/
+            /*            "-": () => [
+                            sprite("lift"),
+                            area(),
+                            body({isStatic: true}),
+                            "lift"
+                        ],*/
             ".": () => [
                 sprite("button"),
                 area(),
@@ -205,7 +121,6 @@ scene("game", ({levelIndex, score, time})=> {
         pos(1450, 100),
         scale(2)
     ])
-
     add([
         sprite("diamondR"),
         pos(1350, 100),
@@ -214,7 +129,6 @@ scene("game", ({levelIndex, score, time})=> {
         sprite("diamondB"),
         pos(1400, 100),
     ])
-
 
 
 
@@ -241,14 +155,14 @@ scene("game", ({levelIndex, score, time})=> {
 
 
     // LIFT
-    const lift = add([
+/*    const lift = add([
         // list of components
         sprite("lift"),
         pos(1000,100),
         area(),
         body({mass: 200}),
         "lift"
-    ]);
+    ]);*/
 
 
     onCollide("player", "button", (p,b,col)=>{
@@ -348,6 +262,10 @@ scene("game", ({levelIndex, score, time})=> {
 })
 
 
+
+
+////////////////////// LOSE
+
 scene("lose", (score)=>{
     add([
         text("loser"),
@@ -363,6 +281,8 @@ scene("lose", (score)=>{
     ])
 })
 
+
+////////////////////// WIN
 scene("win", ()=>{
     add([
         text("levels finished"),
