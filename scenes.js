@@ -2,8 +2,8 @@
 ////////////////////// HOME
 scene("empty", ()=>{
     add([
-        text("press Space or click to start game"),
-        color(0, 0, 255),
+        text("press Space or click to start"),
+        color(0, 0, 0),
         pos(center())
 
     ])
@@ -22,8 +22,10 @@ scene("empty", ()=>{
 
 })
 
+
+
 ////////////////////// GAME
-scene("game", ({levelIndex, score, time})=> {
+scene("game", ({levelIndex, score , time})=> {
 
     // différents elements d'un niveau
     const level = addLevel(LEVELS[levelIndex || 0], {
@@ -176,9 +178,6 @@ scene("game", ({levelIndex, score, time})=> {
 
 
 
-
-
-
     // déplacement ROUGE
     onKeyDown("right", ()=>{
         playerRed.move(SPEED,0)
@@ -222,13 +221,13 @@ scene("game", ({levelIndex, score, time})=> {
     // collision avec block eau
     onCollide("playerRed", "dangerB", (a, b, col) => {
         if(col.isBottom()){
-            go("lose")
+            go("lose", {score: score})
         }
     })
     // collision avec block lave
     onCollide("playerBlue", "dangerR", (a, b, col) => {
         if(col.isBottom()){
-            go("lose")
+            go("lose", {score: score})
         }
     })
 
@@ -243,7 +242,7 @@ scene("game", ({levelIndex, score, time})=> {
                     score : scoreLabel.text
                 })
             }else {
-                go("win")
+                go("win", {score: score})
             }
         })
     } )
@@ -254,7 +253,7 @@ scene("game", ({levelIndex, score, time})=> {
                     levelIndex : levelIndex +1
                 })
             }else {
-                go("win")
+                go("win", {score: score})
             }
         })
     } )
@@ -262,11 +261,9 @@ scene("game", ({levelIndex, score, time})=> {
 })
 
 
-
-
 ////////////////////// LOSE
 
-scene("lose", (score)=>{
+scene("lose", ({score})=>{
     add([
         text("loser"),
         pos(center()),
@@ -277,8 +274,9 @@ scene("lose", (score)=>{
         text(score),
         pos(center()),
         color(0, 0, 255),
-        scale(3),
+        scale(2),
     ])
+
 })
 
 
@@ -289,9 +287,16 @@ scene("win", ()=>{
         pos(center()),
         color(0, 0, 255),
         scale(3),
-
+    ])
+    add([
+        text(score),
+        pos(center()),
+        color(0, 0, 255),
+        scale(2),
     ])
 })
+
+
 
 // start game
 go("empty", {});

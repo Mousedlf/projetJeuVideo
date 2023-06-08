@@ -1,4 +1,5 @@
 
+// SPRITES
 loadSprite("playerRed", "sprites/playerRed.png");
 loadSprite("playerBlue", "sprites/playerBlue.png");
 
@@ -16,3 +17,8 @@ loadSprite("diamondB", "sprites/diamondB.png");
 loadSprite("lava", "sprites/lavablock.png");
 loadSprite("water", "sprites/waterblock.png");
 loadSprite("acid", "sprites/green.png");
+
+
+
+// SOUNDS
+//loadSound("score", "")
