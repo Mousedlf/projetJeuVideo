@@ -6,7 +6,6 @@ kaboom({
 });
 
 
-//AUTRE
 setGravity(600)
 setBackground(220,220,220,0)
 
