@@ -33,7 +33,6 @@ setBackground(220,220,220,0)
 
 const SPEED = 150
 const JUMP_FORCE = 300
-const PLATFORM_SPEED = 5
 
 
 //niveaux
@@ -42,15 +41,15 @@ const LEVELS = [
         '========================================',
         '= =                                    =',
         '= =                              !   ? =',
-        '= =         ============================',
+        '= =       ==============================',
         '= =  +                                 =',
         '= =====                                =',
         '= =====                                =',
-        '= =====        ===xx======             =',
+        '= =====  b     ===xx======             =',
         '= =========aa===================       =',
         '= =                                    =',
         '= =               *                    =',
-        '= =      ==============         -      =',
+        '= =      ==============         -   b  =',
         '=       =             ==================',
         '=                                =======',
         '======      .                        ===',
@@ -62,16 +61,51 @@ const LEVELS = [
         '========================================',
     ],
     [
+        '========================================',
+        '=                                      =',
+        '=                                      =',
+        '========        =====                * =',
+        '=================                 ======',
+        '=                                      =',
+        '= +              *+     =======        =',
+        '=                                      =',
+        '=         ==    ====                   =',
+        '=                                      =',
+        '===    ==aaaaaaaaaaaaaaaaaaaa======    =',
+        '=                                      =',
+        '= *                                    =',
+        '=                                      =',
+        '=                                      =',
+        '=    ==xx====         *      +       ? =',
+        '=    =                              ====',
+        '======               ==     ==      ====',
+        '======   !                        b ====',
+        '===================ooooo===xxxxx========',
+    ],
 
-        '=            _                        =',
-        '=          ===========xxx====        =',
-        '=                                    =',
-        '=                                    =',
-        '=                                    =',
-        '=  ! ?                               =',
-        '=========================ooo==========',
-    ]
 ]
+
+scene("empty", ()=>{
+    add([
+        text("press Space or click to start game"),
+        color(0, 0, 255),
+        pos(center())
+
+    ])
+    onKeyPress("space",() => {
+        go("game", {
+            levelIndex: 0,
+            score: 0,
+        })
+    } )
+    onClick(() => {
+        go("game", {
+            levelIndex: 0,
+            score: 0,
+        })
+    })
+
+})
 
 scene("game", ({levelIndex, score, time})=> {
 
@@ -149,24 +183,39 @@ scene("game", ({levelIndex, score, time})=> {
 
     })
 
-    // affichage du score
-    const scoreLabel = add([
-        text(score),
-        pos(10, 40),
-    ])
 
     // affiche temps qui passe
     const timer = add([
         text(0),
-        pos(0, 100),
+        pos(1350, 40),
+        color(0, 0, 0),
         fixed(),
         { time: 0 },
     ])
-
-    /*  timer.onUpdate(() => {
+    timer.onUpdate(() => {
         timer.time += dt()
         timer.text = timer.time.toFixed(1)
-    })*/
+    })
+
+
+    // affichage du score
+    const scoreLabel = add([
+        text(score),
+        color(0, 0, 0),
+        pos(1450, 100),
+        scale(2)
+    ])
+
+    add([
+        sprite("diamondR"),
+        pos(1350, 100),
+    ])
+    add([
+        sprite("diamondB"),
+        pos(1400, 100),
+    ])
+
+
 
 
     // RED PLAYER
@@ -276,7 +325,8 @@ scene("game", ({levelIndex, score, time})=> {
         onCollide("playerBlue", "doorB", ()=>{
             if(levelIndex < LEVELS.length - 1){
                 go("game", {
-                    levelIndex : levelIndex +1
+                    levelIndex : levelIndex +1,
+                    score : scoreLabel.text
                 })
             }else {
                 go("win")
@@ -294,26 +344,34 @@ scene("game", ({levelIndex, score, time})=> {
             }
         })
     } )
+
 })
 
 
-scene("lose", ()=>{
+scene("lose", (score)=>{
     add([
         text("loser"),
-        pos(center())
+        pos(center()),
+        color(0, 0, 255),
         // add something to retry level
+    ])
+    add([
+        text(score),
+        pos(center()),
+        color(0, 0, 255),
+        scale(3),
     ])
 })
 
 scene("win", ()=>{
     add([
-        text("you won"),
-        pos(center())
+        text("levels finished"),
+        pos(center()),
+        color(0, 0, 255),
+        scale(3),
+
     ])
 })
 
 // start game
-go("game", {
-    levelIndex: 0,
-    score:0,
-});
+go("empty", {});
