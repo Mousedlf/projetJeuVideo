@@ -22,13 +22,13 @@ loadSprite("playerRed", "sprites/cat.png");
 loadSprite("playerBlue", "sprites/cat2.png");
 
 loadSprite("brickLight", "sprites/floor.png");
-loadSprite("lift", "sprites/waterblock.png");
+//loadSprite("lift", "sprites/waterblock.png");
 loadSprite("button", "sprites/brickLight.png");
 loadSprite("superjump", "sprites/superjump.png");
 
 loadSprite("box", "sprites/box.png");
-loadSprite("doorR", "sprites/doorR.png");
-loadSprite("doorB", "sprites/doorB.png");
+loadSprite("doorR", "sprites/doorM.png");
+loadSprite("doorB", "sprites/doorW.png");
 
 loadSprite("diamondR", "sprites/diamondM.png");
 loadSprite("diamondB", "sprites/diamondW.png");
@@ -57,7 +57,7 @@ const LEVELS = [
         '= =                           ==       =',
         '= =               *                  + =',
         '=         =============                =',
-        '=       ===           ==========l=======',
+        '=       ===           ==========ll======',
         '=                                =======',
         '=====                                ===',
         '=====  ===========                     =',
@@ -96,9 +96,22 @@ const LEVELS = [
 ////////////////////// HOME
 scene("empty", ()=>{
     add([
+        text("to move brown cat use ARROWS"),
+        color(0, 0, 0),
+        pos(100,100),
+
+    ])
+    add([
+        text("to move white cat use Z,Q,S,D"),
+        color(0, 0, 0),
+        pos(100,150),
+
+    ])
+
+    add([
         text("press Space or click to start"),
         color(0, 0, 0),
-        pos(center()),
+        pos(100,250),
 
     ])
     onKeyPress("space",() => {
@@ -147,7 +160,7 @@ scene("game", ({levelIndex, score , time})=> {
             "b": () => [
                 sprite("box"),
                 area(),
-                body({mass: 2}),
+                body({mass: 1}),
                 "box"
             ],
             "x": () => [
@@ -394,12 +407,7 @@ scene("lose", ({score})=>{
 
 ////////////////////// WIN
 scene("win", ({score})=>{
-    add([
-        text("levels finished"),
-        pos(center()),
-        color(0, 0, 255),
-        scale(3),
-    ])
+
     add([
         text(score),
         pos(center()),
